@@ -14,10 +14,8 @@ Project Milestones
 2. Distance Metric (Which Node should own <k,v> pair ?)
 3. Routing Storing Adjacent Node
 4. Routing (where to find <k,v>?)
-5. Store values in Single Nodes
-6. Storing k adjacent subtrees in Each Node
-7. Find paths for <k,v> pair
-8. Updating <k,v> pair if network is gone
+5. Store values in Single/Mutiple Nodes
+6. Updating <k,v> pair if network is gone
 
 **1 Assigning Nodes**
 
@@ -35,16 +33,17 @@ Our system can have max of 16 nodes store
 
 Rules for distance metric
 
-d(x,x) = 0 self distance should be zero
-d(x,y) > 0 distance should be +ve
+1. d(x,x) = 0 self distance should be zero
+2. d(x,y) > 0 distance should be +ve
 
-d(x,y) + d(y,z) >= d(x,z) trianlge inequality
-**shortest distance between the two points is staright line connecting them **
+3. d(x,y) + d(y,z) >= d(x,z) trianlge inequality
+
+   **shortest distance between the two points is staright line connecting them**
 
 distance metric used in kademlia is
 **d(x,y) = x ^ y (XOR) which is satisy all distance metric rules**
 
-- Lets take <k,v> pair and calculate distance between <k,v> and <n0>,<n1>.....<n15> nodes
+- Lets take <k,v> pair and calculate distance between <k,v> and n0,n1.....n15 nodes
 - Node with mininum distance we will store <k,v> with <Node>
 
 **Observation : the most comman Prefix of key and shorter distance**
@@ -53,4 +52,21 @@ distance metric used in kademlia is
 
 **3. Routing Storing Adjacent Node**
 
-Every Node knows at least One Node in each subtree that if is not part of
+how would node 7 find what’s the value at key 13?
+
+**Every node will have a routing table with IP addresses and IDs of at least “K” other active nodes in a prefix range**
+whatttt?
+
+Every Node will need n connection to talk where n=4 (actual n=160bits)
+
+**4.Routing (where to find <k,v>?)**
+
+Apply Least common ancestor Algorithm to find pairs
+
+if key=1101 we can search in node=1110 or node=1111
+
+https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
+
+**5.Store values in Single/Mutiple Nodes**
+
+i'm confused about these section whether to store store keys in single node or mutiple node then how to avoid collison. i think i need read entire paper?

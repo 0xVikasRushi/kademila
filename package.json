@@ -1,0 +1,19 @@
+{
+  "name": "kademila-implementation",
+  "version": "1.0.0",
+  "description": "Kademlia - Distributed Hash Table Implementation",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "dev": "ts-node src/index.ts",
+    "build": "tsc --build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "typescript": "^5.4.2",
+    "typescript-eslint": "^7.3.1"
+  }
+}
