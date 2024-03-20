@@ -68,5 +68,3 @@ if key=1101 we can search in node=1110 or node=1111
 https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
 
 **5.Store values in Single/Mutiple Nodes**
-
-i'm confused about these section whether to store store keys in single node or mutiple node then how to avoid collison. i think i need read entire paper?
