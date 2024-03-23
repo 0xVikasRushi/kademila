@@ -18,6 +18,7 @@
     "typescript-eslint": "^7.3.1"
   },
   "dependencies": {
-    "crypto-js": "^4.2.0"
+    "crypto-js": "^4.2.0",
+    "mathjs": "^12.4.1"
   }
 }
