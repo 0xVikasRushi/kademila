@@ -32,16 +32,15 @@ export class KademilaNode {
     this.NodeState = NodeState.OFFLINE;
   }
 
-  public STORE(key: number, value: string) {
+  // ? can be used by own node instance by api call
+  private SAVE(key: number, value: string) {
     // TODO 1 HASH KEY IN BIT SIZE AND CHECK IF NODE IS ONLINE OR NOT
     // TODO 2 IF CONTAINS KEY PRINT
-    const isContains = this.k_buckets.filter((e) => {
-      return e === key;
-    });
-
-    console.log(isContains);
     this.map.set(key, value);
   }
+
+  // TODO 3 IMPLEMENT VALUE FUNCTION
+  public FIND_VALUE() {}
 
   public start() {
     this.NodeState = NodeState.ONLINE;
@@ -90,8 +89,8 @@ export class KademilaNode {
 
       app.get("/findNode/:nodeId", async (req: Request, res: Response) => {
         const nodeId = parseInt(req.params.nodeId);
-
-        if (nodeId < Math.pow(2, BIT_SIZE)) {
+        if (nodeId > Math.pow(2, BIT_SIZE)) {
+          console.log(nodeId);
           return res
             .status(200)
             .json({ found: false, error: "nodeId not found" });
@@ -107,6 +106,31 @@ export class KademilaNode {
           res.status(500).send({ error: "Internal server error" });
         }
       });
+
+      app.get("/save/:key/:value", async (req: Request, res: Response) => {
+        try {
+          const key = parseInt(req.params.key);
+          const value = req.params.value as string;
+
+          if (key == this.id) {
+            this.SAVE(key, value);
+            return res.send({
+              status: "SAVED",
+              msg: `saved at node id ${this.id}`,
+            });
+          }
+          const port = this.network.get(key);
+          await axios.get(`http://${this.ip}:${port}/save/${key}/${value}`);
+
+          console.log(`FORWARD at node id ${this.id}:${port}`);
+          return res.send({
+            status: "FORWARD",
+            msg: `FORWARD at node id ${this.id}`,
+          });
+        } catch (error) {
+          res.send(500).json({ error });
+        }
+      });
     } catch (error) {
       this.NodeState = NodeState.OFFLINE;
       console.log(error);
@@ -120,12 +144,6 @@ export class KademilaNode {
   public GET(key: number) {
     return this.map.get(key);
   }
-
-  // ? IF I WANTED TO NODE ROUTE FROM CURRENT NODE TO  NODE HOW TO DO THAT
-  // ? API ENDPOINT FIND_NODE_ID => CURRENT IP
-  // ? FIRST GET CURRENT BUCKETS IN CURRENT IP
-  // ? CHECK IF NODE IS PRESENT IT
-  // ? RUN SAME ALGO UNTIL IF WE FIND NODE TRACES
 
   private async PING_EXTERNAL(node_id: number) {
     const network_port = this.network.get(node_id);
@@ -185,12 +203,4 @@ export class KademilaNode {
 
     return k_bucket_without_ping;
   }
-
-  public PING() {
-    return this.NodeState;
-  }
-  public getNodeState() {
-    return this.NodeState;
-  }
-  public FIND_VALUE() {}
 }
