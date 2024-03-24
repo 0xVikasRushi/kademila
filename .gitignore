@@ -19,6 +19,7 @@ public/css/main.css
 # Coverage reports
 coverage
 .obsidian/
+.vscode/
 # API keys and secrets
 *.env
 

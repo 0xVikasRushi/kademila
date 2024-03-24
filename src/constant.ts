@@ -1,1 +1,1 @@
-export const BIT_SIZE = 160;
+export const BIT_SIZE = 4;
