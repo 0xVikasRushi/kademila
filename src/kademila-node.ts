@@ -90,46 +90,23 @@ export class KademilaNode {
 
       app.get("/findNode/:nodeId", async (req: Request, res: Response) => {
         const nodeId = parseInt(req.params.nodeId);
-        const currBuckets = this.k_buckets;
 
+        if (nodeId < Math.pow(2, BIT_SIZE)) {
+          return res
+            .status(200)
+            .json({ found: false, error: "nodeId not found" });
+        }
+
+        const currBuckets = this.k_buckets;
         try {
           console.log(currBuckets, nodeId);
           const result = await this.FIND_NODE(nodeId, currBuckets);
-          res.json(result);
+          return res.json(result);
         } catch (error) {
           console.error("Error finding node:", error);
-          res.status(500).send({ error: "Internal server error" }); // Provide generic error for client
+          res.status(500).send({ error: "Internal server error" });
         }
       });
-      // async function FIND_NODE_TEST(node_id: number, buckets: number[]) {
-      //   for (let i = 0; i < buckets.length; i++) {
-      //     if (buckets[i] == node_id) {
-      //       console.log(`node found at ${node_id} and ${buckets[i]}`);
-      //       return;
-      //     }
-      //   }
-
-      //   let min_xor_node = -1;
-      //   let min_xor_val = -1;
-      //   for (let i = 0; i < buckets.length; i++) {
-      //     const res = buckets[i] ^ node_id;
-      //     if (res < min_xor_val) {
-      //       min_xor_node = node_id;
-      //       min_xor_val = res;
-      //     }
-      //   }
-      //   console.log(`transferred to new ${min_xor_node}`);
-      //   const network_port = network_temp.get(min_xor_node);
-
-      //   const result = await axios.get(
-      //     `http://${ip_temp}:${network_port}/ping`,
-      //   );
-      //   const new_bucket = (result.data as PingResponse).buckets;
-
-      //   return FIND_NODE_TEST(node_id, new_bucket);
-      // }
-
-      // await FIND_NODE_TEST(node_id, currBuckets);
     } catch (error) {
       this.NodeState = NodeState.OFFLINE;
       console.log(error);
@@ -144,7 +121,7 @@ export class KademilaNode {
     return this.map.get(key);
   }
 
-  // ? IF I WANTED TO NODE ROUTE FROM CURRENT NODE TO DESERIED NODE HOW TO DO THAT
+  // ? IF I WANTED TO NODE ROUTE FROM CURRENT NODE TO  NODE HOW TO DO THAT
   // ? API ENDPOINT FIND_NODE_ID => CURRENT IP
   // ? FIRST GET CURRENT BUCKETS IN CURRENT IP
   // ? CHECK IF NODE IS PRESENT IT
@@ -168,6 +145,7 @@ export class KademilaNode {
 
     let closestNode = -1;
     let minXorDistance = Infinity;
+
     for (const bucketNode of buckets) {
       const xorDistance = nodeId ^ bucketNode;
       if (xorDistance < minXorDistance) {
@@ -180,7 +158,7 @@ export class KademilaNode {
       try {
         const externalBuckets = await this.PING_EXTERNAL(closestNode);
         console.log(`Ping External Services node ${closestNode}`);
-        return await this.FIND_NODE(closestNode, externalBuckets);
+        return await this.FIND_NODE(nodeId, externalBuckets);
       } catch (error) {
         console.error(`Error pinging external node ${closestNode}:`, error);
         return { found: false, error: "External node communication error" };
@@ -216,16 +194,3 @@ export class KademilaNode {
   }
   public FIND_VALUE() {}
 }
-
-// public FIND_DISTANCE_IN_ALL(key: string) {
-//   let min = Mathjs.bignumber(0);
-//   let networkId = Mathjs.bignumber(0);
-//   for (let i = 0; i < this.network.length; i++) {
-//     const xorRes = XOR(this.network[i], key);
-//     if (Mathjs.smaller(min, xorRes)) {
-//       min = xorRes;
-//       networkId = Mathjs.bignumber(this.network[i]);
-//     }
-//   }
-//   return { distance: min, networkid: networkId };
-// }
