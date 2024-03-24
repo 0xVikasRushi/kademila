@@ -15,7 +15,7 @@ export function generateRandomBN(): string {
 }
 
 export function getIdealDistance() {
-  const IDEAL_DISTANCE = [];
+  const IDEAL_DISTANCE: number[] = [];
   for (let i = 0; i < BIT_SIZE; i++) {
     const val = Math.pow(2, i);
     IDEAL_DISTANCE.push(val);
