@@ -1,6 +1,14 @@
 import * as Mathjs from "mathjs";
 import { BIT_SIZE } from "./constant";
 
+// * Create a mask with all bits set except MSB using bitwise operations
+// * Perform bitwise AND between key and mask for hashing
+
+export const HASH_BIT_SIZE = (key: number) => {
+  const mask: number = (1 << (BIT_SIZE - 1)) - 1;
+  return key & mask;
+};
+
 export const XOR = (n1: string, n2: string): Mathjs.BigNumber => {
   return Mathjs.bitXor(Mathjs.bignumber(n1), Mathjs.bignumber(n2));
 };
@@ -31,9 +39,3 @@ export function distance(nodeId1: string, nodeId2: string): number {
   }
   return result;
 }
-// const a = randomBytes(20);
-// const b = randomBytes(20);
-
-// console.log(a.toString());
-// console.log(b.toString());
-// console.log(distance("1111", "0000"));

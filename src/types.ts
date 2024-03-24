@@ -20,3 +20,8 @@ export interface FindNodeResponse {
   nodeId?: number;
   error?: string;
 }
+
+export interface SaveValueResponse {
+  found: boolean;
+  value: string | null;
+}

@@ -7,8 +7,9 @@ import {
   NodeState,
   PingResponse,
   RoutingTable,
+  SaveValueResponse,
 } from "./types";
-import { getIdealDistance } from "./utils";
+import { HASH_BIT_SIZE, getIdealDistance } from "./utils";
 
 export class KademilaNode {
   // ! PUBLIC STATE
@@ -18,7 +19,8 @@ export class KademilaNode {
   public k_buckets: number[] = [];
   public routing_table: RoutingTable[] = [];
 
-  public network: Map<number, number>; // ? LIST OF NODEID AND PORTS
+  // * LIST OF NODEID AND PORTS
+  public network: Map<number, number>;
 
   // ! PRIVATE STATE
   private NodeState: NodeState = NodeState.ONLINE;
@@ -39,9 +41,9 @@ export class KademilaNode {
     this.map.set(key, value);
   }
 
-  // TODO 3 IMPLEMENT VALUE FUNCTION
-  public FIND_VALUE() {}
-
+  private hashKey(key: number): number {
+    return HASH_BIT_SIZE(key);
+  }
   public start() {
     this.NodeState = NodeState.ONLINE;
     this.k_buckets = this.init();
@@ -68,6 +70,15 @@ export class KademilaNode {
             msg: `Kademila Running on ${this.id}`,
           })
           .status(200);
+      });
+
+      app.get("get/:key", async (req: Request, res: Response) => {
+        const key = parseInt(req.params.key);
+        const value = this.GET(key);
+        if (value) {
+          return res.send({ value, found: true });
+        }
+        return res.send({ found: false, value: null });
       });
 
       app.get("/pingserver/:port", async (req: Request, res: Response) => {
@@ -107,16 +118,26 @@ export class KademilaNode {
         }
       });
 
+      app.get("/findValue/:key", async (req: Request, res: Response) => {
+        const hashKey = this.hashKey(parseInt(req.params.key));
+        const value = await this.FIND_VALUE(hashKey);
+        if (value) {
+          return res.send({ value, found: true });
+        } else {
+          return res.send({ found: false });
+        }
+      });
+
       app.get("/save/:key/:value", async (req: Request, res: Response) => {
         try {
-          const key = parseInt(req.params.key);
+          const key = HASH_BIT_SIZE(parseInt(req.params.key));
           const value = req.params.value as string;
 
           if (key == this.id) {
             this.SAVE(key, value);
             return res.send({
               status: "SAVED",
-              msg: `saved at node id ${this.id}`,
+              msg: `saved at node id ${this.id}:${this.port}`,
             });
           }
           const port = this.network.get(key);
@@ -128,7 +149,7 @@ export class KademilaNode {
             msg: `FORWARD at node id ${this.id}`,
           });
         } catch (error) {
-          res.send(500).json({ error });
+          res.send({ error });
         }
       });
     } catch (error) {
@@ -151,6 +172,30 @@ export class KademilaNode {
     return (result.data as PingResponse).buckets;
   }
 
+  public async FIND_VALUE(key: number): Promise<{
+    value: string;
+    node_id: number;
+  } | null> {
+    const hash_key = this.hashKey(key);
+
+    const value = this.map.get(hash_key);
+    if (value!) {
+      return Promise.resolve({ value, node_id: this.id });
+    }
+    const wanted_node_id = (await this.FIND_NODE(hash_key, this.k_buckets))
+      .nodeId!;
+
+    const wanted_port = this.network.get(wanted_node_id);
+
+    const result = (await axios.get(
+      `http://${this.ip}:${wanted_port}/get/${hash_key}`,
+    )) as SaveValueResponse;
+
+    if (result.found) {
+      return Promise.resolve({ value: result.value!, node_id: wanted_node_id });
+    }
+    return null;
+  }
   public async FIND_NODE(
     nodeId: number,
     buckets: number[],
