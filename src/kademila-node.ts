@@ -48,7 +48,12 @@ export class KademilaNode {
       });
 
       app.get("/ping", async (req: Request, res: Response) => {
-        return res.json({ status: true, msg: `Kademila Running on ${this.id}` }).status(200);
+        return res
+          .json({
+            status: true,
+            msg: `Kademila Running on ${this.id}`,
+          })
+          .status(200);
       });
 
       app.get("/pingserver/:port", async (req: Request, res: Response) => {
@@ -57,7 +62,12 @@ export class KademilaNode {
           let result = await axios.get(`http://${this.ip}:${port}/ping`);
           result = result.data.status;
           console.log(result);
-          return res.json({ status: result, msg: `PING FROM ${this.id} TO ${port}` }).status(200);
+          return res
+            .json({
+              status: result,
+              msg: `PING FROM ${this.id} TO ${port}`,
+            })
+            .status(200);
         } catch (error) {
           res.send(error);
         }
