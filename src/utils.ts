@@ -1,5 +1,6 @@
 import * as Mathjs from "mathjs";
 import { BIT_SIZE } from "./constant";
+import { KademilaNode } from "./kademila-node";
 
 // * Create a mask with all bits set except MSB using bitwise operations
 // * Perform bitwise AND between key and mask for hashing
@@ -12,6 +13,12 @@ export const HASH_BIT_SIZE = (key: number) => {
 export const XOR = (n1: string, n2: string): Mathjs.BigNumber => {
   return Mathjs.bitXor(Mathjs.bignumber(n1), Mathjs.bignumber(n2));
 };
+
+export async function startNode(id: number, port: number) {
+  const node = new KademilaNode(id, port);
+  await node.start();
+  return node;
+}
 
 export function generateRandomBN(): string {
   let binaryNumber = "";

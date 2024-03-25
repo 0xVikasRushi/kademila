@@ -25,6 +25,7 @@ export class KademilaNode {
   // ! PRIVATE STATE
   private NodeState: NodeState = NodeState.ONLINE;
   private map: Map<number, string>;
+  private app = express();
 
   constructor(id: number, port: number) {
     this.id = id;
@@ -44,25 +45,23 @@ export class KademilaNode {
   private hashKey(key: number): number {
     return HASH_BIT_SIZE(key);
   }
-  public start() {
+  public async start() {
     this.NodeState = NodeState.ONLINE;
     this.k_buckets = this.init();
-    console.log(this.id, this.k_buckets);
+    // console.log(this.id, this.k_buckets);
 
     try {
-      const app = express();
-
-      app.use(express.json());
-      app.use(cors());
-      app.get("/", (req: Request, res: Response) => {
+      this.app.use(express.json());
+      this.app.use(cors());
+      this.app.get("/", (req: Request, res: Response) => {
         return res.send(`Kademila Running on ${this.id}`);
       });
 
-      app.listen(this.port, this.ip, () => {
+      this.app.listen(this.port, this.ip, () => {
         console.log(`Kademila Running on ${this.id}`);
       });
 
-      app.get("/ping", async (req: Request, res: Response) => {
+      this.app.get("/ping", async (req: Request, res: Response) => {
         return res
           .json({
             status: true,
@@ -72,7 +71,7 @@ export class KademilaNode {
           .status(200);
       });
 
-      app.get("get/:key", async (req: Request, res: Response) => {
+      this.app.get("get/:key", async (req: Request, res: Response) => {
         const key = parseInt(req.params.key);
         const value = this.GET(key);
         if (value) {
@@ -81,7 +80,7 @@ export class KademilaNode {
         return res.send({ found: false, value: null });
       });
 
-      app.get("/pingserver/:port", async (req: Request, res: Response) => {
+      this.app.get("/pingServer/:port", async (req: Request, res: Response) => {
         try {
           const port = req.params.port as string;
           let result = await axios.get(`http://${this.ip}:${port}/ping`);
@@ -98,7 +97,7 @@ export class KademilaNode {
         }
       });
 
-      app.get("/findNode/:nodeId", async (req: Request, res: Response) => {
+      this.app.get("/findNode/:nodeId", async (req: Request, res: Response) => {
         const nodeId = parseInt(req.params.nodeId);
         if (nodeId > Math.pow(2, BIT_SIZE)) {
           console.log(nodeId);
@@ -118,7 +117,7 @@ export class KademilaNode {
         }
       });
 
-      app.get("/findValue/:key", async (req: Request, res: Response) => {
+      this.app.get("/findValue/:key", async (req: Request, res: Response) => {
         const hashKey = this.hashKey(parseInt(req.params.key));
         const value = await this.FIND_VALUE(hashKey);
         if (value) {
@@ -128,7 +127,7 @@ export class KademilaNode {
         }
       });
 
-      app.get("/save/:key/:value", async (req: Request, res: Response) => {
+      this.app.get("/save/:key/:value", async (req: Request, res: Response) => {
         try {
           const key = HASH_BIT_SIZE(parseInt(req.params.key));
           const value = req.params.value as string;
