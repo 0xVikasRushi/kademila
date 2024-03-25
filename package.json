@@ -7,7 +7,7 @@
     "start": "tsc && node dist/server.js",
     "dev": "ts-node src/server.ts",
     "build": "tsc --build",
-    "test": "jest"
+    "test": "tsc && jest"
   },
   "keywords": [],
   "author": "",

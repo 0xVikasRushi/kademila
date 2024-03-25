@@ -33,25 +33,6 @@ export class KademilaNode {
     this.port = port;
     this.map = new Map<number, string>();
     this.NodeState = NodeState.OFFLINE;
-    this.k_buckets = this.init();
-  }
-
-  public init() {
-    const node_id = this.id;
-    const IDEAL_DISTANCE = getIdealDistance();
-    const PORT_NUMBER = 3000;
-
-    const k_bucket_without_ping: number[] = [];
-    for (let i = 0; i < IDEAL_DISTANCE.length; i++) {
-      const res = (node_id ^ IDEAL_DISTANCE[i]) as number;
-      k_bucket_without_ping.push(res);
-    }
-
-    for (let i = 0; i < Math.pow(2, BIT_SIZE); i++) {
-      this.network.set(i, PORT_NUMBER + i);
-    }
-
-    return k_bucket_without_ping;
   }
 
   // ? can be used by own node instance by api call
@@ -66,6 +47,8 @@ export class KademilaNode {
   }
   public async start() {
     this.NodeState = NodeState.ONLINE;
+    this.k_buckets = this.init();
+
     // console.log(this.id, this.k_buckets);
 
     try {
@@ -87,6 +70,11 @@ export class KademilaNode {
             msg: `Kademila Running on ${this.id}`,
           })
           .status(200);
+      });
+
+      this.app.get("/getAllKeys", async (req: Request, res: Response) => {
+        const values = this.GET_ALL();
+        res.send({ values });
       });
 
       this.app.get("get/:key", async (req: Request, res: Response) => {
@@ -180,8 +168,16 @@ export class KademilaNode {
     // ? need stop the express server
   }
 
-  public GET(key: number) {
+  private GET(key: number) {
     return this.map.get(key);
+  }
+
+  private GET_ALL(): string[] {
+    const values: string[] = [];
+    this.map.forEach((value) => {
+      values.push(value);
+    });
+    return values;
   }
 
   private async PING_EXTERNAL(node_id: number) {
@@ -256,5 +252,22 @@ export class KademilaNode {
     }
 
     return { found: false, error: "Node not found in k-buckets", route };
+  }
+  public init() {
+    const node_id = this.id;
+    const IDEAL_DISTANCE = getIdealDistance();
+    const PORT_NUMBER = 3000;
+
+    const k_bucket_without_ping: number[] = [];
+    for (let i = 0; i < IDEAL_DISTANCE.length; i++) {
+      const res = (node_id ^ IDEAL_DISTANCE[i]) as number;
+      k_bucket_without_ping.push(res);
+    }
+
+    for (let i = 0; i < Math.pow(2, BIT_SIZE); i++) {
+      this.network.set(i, PORT_NUMBER + i);
+    }
+
+    return k_bucket_without_ping;
   }
 }
