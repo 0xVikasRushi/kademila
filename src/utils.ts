@@ -4,13 +4,12 @@ import { KademilaNode } from "./kademila-node";
 
 // * Create a mask with all bits set except MSB using bitwise operations
 // * Perform bitwise AND between key and mask for hashing
-
 export const HASH_BIT_SIZE = (key: number) => {
   const mask: number = (1 << (BIT_SIZE - 1)) - 1;
   return key & mask;
 };
 
-export const XOR = (n1: string, n2: string): Mathjs.BigNumber => {
+export const XOR = (n1: number, n2: number) => {
   return Mathjs.bitXor(Mathjs.bignumber(n1), Mathjs.bignumber(n2));
 };
 
@@ -18,15 +17,6 @@ export async function startNode(id: number, port: number) {
   const node = new KademilaNode(id, port);
   await node.start();
   return node;
-}
-
-export function generateRandomBN(): string {
-  let binaryNumber = "";
-  for (let i = 0; i < BIT_SIZE; i++) {
-    const bit = Math.random() < 0.5 ? "0" : "1";
-    binaryNumber += bit;
-  }
-  return binaryNumber;
 }
 
 export function getIdealDistance() {
@@ -37,6 +27,8 @@ export function getIdealDistance() {
   }
   return IDEAL_DISTANCE;
 }
+
+// * Experimental Distance with Hex
 export function distance(nodeId1: string, nodeId2: string): number {
   const buffer1 = Buffer.from(nodeId1, "hex");
   const buffer2 = Buffer.from(nodeId2, "hex");
@@ -45,4 +37,14 @@ export function distance(nodeId1: string, nodeId2: string): number {
     result ^= buffer1[i] ^ buffer2[i];
   }
   return result;
+}
+
+// ! NOTE: Dumb way probability will no distributed evenly
+export function generateRandomBN(): string {
+  let binaryNumber = "";
+  for (let i = 0; i < BIT_SIZE; i++) {
+    const bit = Math.random() < 0.5 ? "0" : "1";
+    binaryNumber += bit;
+  }
+  return binaryNumber;
 }

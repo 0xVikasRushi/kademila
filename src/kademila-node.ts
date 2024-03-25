@@ -33,6 +33,25 @@ export class KademilaNode {
     this.port = port;
     this.map = new Map<number, string>();
     this.NodeState = NodeState.OFFLINE;
+    this.k_buckets = this.init();
+  }
+
+  public init() {
+    const node_id = this.id;
+    const IDEAL_DISTANCE = getIdealDistance();
+    const PORT_NUMBER = 3000;
+
+    const k_bucket_without_ping: number[] = [];
+    for (let i = 0; i < IDEAL_DISTANCE.length; i++) {
+      const res = (node_id ^ IDEAL_DISTANCE[i]) as number;
+      k_bucket_without_ping.push(res);
+    }
+
+    for (let i = 0; i < Math.pow(2, BIT_SIZE); i++) {
+      this.network.set(i, PORT_NUMBER + i);
+    }
+
+    return k_bucket_without_ping;
   }
 
   // ? can be used by own node instance by api call
@@ -47,7 +66,6 @@ export class KademilaNode {
   }
   public async start() {
     this.NodeState = NodeState.ONLINE;
-    this.k_buckets = this.init();
     // console.log(this.id, this.k_buckets);
 
     try {
@@ -159,6 +177,7 @@ export class KademilaNode {
 
   public stop() {
     this.NodeState = NodeState.OFFLINE;
+    // ? need stop the express server
   }
 
   public GET(key: number) {
@@ -237,23 +256,5 @@ export class KademilaNode {
     }
 
     return { found: false, error: "Node not found in k-buckets", route };
-  }
-
-  public init() {
-    const node_id = this.id;
-    const IDEAL_DISTANCE = getIdealDistance();
-    const PORT_NUMBER = 3000;
-
-    const k_bucket_without_ping: number[] = [];
-    for (let i = 0; i < IDEAL_DISTANCE.length; i++) {
-      const res = (node_id ^ IDEAL_DISTANCE[i]) as number;
-      k_bucket_without_ping.push(res);
-    }
-
-    for (let i = 0; i < Math.pow(2, BIT_SIZE); i++) {
-      this.network.set(i, PORT_NUMBER + i);
-    }
-
-    return k_bucket_without_ping;
   }
 }

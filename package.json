@@ -4,8 +4,8 @@
   "description": "Kademlia - Distributed Hash Table Implementation",
   "main": "index.js",
   "scripts": {
-    "start": "tsc && node dist/index.js",
-    "dev": "ts-node src/index.ts",
+    "start": "tsc && node dist/server.js",
+    "dev": "ts-node src/server.ts",
     "build": "tsc --build",
     "test": "jest"
   },
