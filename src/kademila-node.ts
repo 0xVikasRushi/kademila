@@ -108,7 +108,8 @@ export class KademilaNode {
         const currBuckets = this.k_buckets;
         try {
           console.log(currBuckets, nodeId);
-          const result = await this.FIND_NODE(nodeId, currBuckets);
+          const route: number[] = [];
+          const result = await this.FIND_NODE(nodeId, currBuckets, route);
           return res.json(result);
         } catch (error) {
           console.error("Error finding node:", error);
@@ -180,8 +181,10 @@ export class KademilaNode {
     if (value!) {
       return Promise.resolve({ value, node_id: this.id });
     }
-    const wanted_node_id = (await this.FIND_NODE(hash_key, this.k_buckets))
-      .nodeId!;
+    const route: number[] = [];
+    const wanted_node_id = (
+      await this.FIND_NODE(hash_key, this.k_buckets, route)
+    ).nodeId!;
 
     const wanted_port = this.network.get(wanted_node_id);
 
@@ -194,13 +197,15 @@ export class KademilaNode {
     }
     return null;
   }
+
   public async FIND_NODE(
     nodeId: number,
     buckets: number[],
+    route: number[],
   ): Promise<FindNodeResponse> {
     for (const bucketNode of buckets) {
       if (bucketNode === nodeId) {
-        return { found: true, nodeId: bucketNode };
+        return { found: true, nodeId: bucketNode, route };
       }
     }
 
@@ -219,14 +224,19 @@ export class KademilaNode {
       try {
         const externalBuckets = await this.PING_EXTERNAL(closestNode);
         console.log(`Ping External Services node ${closestNode}`);
-        return await this.FIND_NODE(nodeId, externalBuckets);
+        route.push(closestNode);
+        return await this.FIND_NODE(nodeId, externalBuckets, route);
       } catch (error) {
         console.error(`Error pinging external node ${closestNode}:`, error);
-        return { found: false, error: "External node communication error" };
+        return {
+          found: false,
+          error: "External node communication error",
+          route,
+        };
       }
     }
 
-    return { found: false, error: "Node not found in k-buckets" };
+    return { found: false, error: "Node not found in k-buckets", route };
   }
 
   public init() {

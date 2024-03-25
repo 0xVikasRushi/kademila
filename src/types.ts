@@ -17,6 +17,7 @@ export interface PingResponse {
 
 export interface FindNodeResponse {
   found: boolean;
+  route: number[];
   nodeId?: number;
   error?: string;
 }

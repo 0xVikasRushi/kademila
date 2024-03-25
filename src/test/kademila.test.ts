@@ -2,7 +2,7 @@ import axios from "axios";
 import { KademilaNode } from "../kademila-node";
 import { startNode } from "../utils";
 import { BIT_SIZE } from "../constant";
-import { PingResponse } from "../types";
+import { FindNodeResponse, PingResponse } from "../types";
 
 describe("Node Startup and Communication", () => {
   const nodes: KademilaNode[] = [];
@@ -39,6 +39,34 @@ describe("Node Startup and Communication", () => {
     for (const node of nodes) {
       const map = node.network;
       expect(map.entries === network_map.entries).toBe(true);
+    }
+  });
+
+  // ? Route from 0-> 15 i.e 0000 to 1111 will be from 8, 12, 14
+  test("FindNode 15 Route from Node 0 -> Node 15", async () => {
+    const expectedResult = [8, 12, 14];
+    const result = (await axios.get("http://localhost:3000/findNode/15"))
+      .data as FindNodeResponse;
+    const route = result.route!;
+    expect(expectedResult.length === route.length).toBe(true);
+    for (let i = 0; i < expectedResult.length; i++) {
+      const actualEle = route[i];
+      const expectedEle = expectedResult[i];
+      expect(actualEle === expectedEle).toBe(true);
+    }
+  });
+
+  // ? Route from 15-> 0 i.e 1111 to 0000 will be from 7,3,1
+  test("FindNode 15 Route from Node 0 -> Node 15", async () => {
+    const expectedResult = [7, 3, 1]; // ? refer routing table
+    const result = (await axios.get("http://localhost:3015/findNode/0"))
+      .data as FindNodeResponse;
+    const route = result.route!;
+    expect(expectedResult.length === route.length).toBe(true);
+    for (let i = 0; i < expectedResult.length; i++) {
+      const actualEle = route[i];
+      const expectedEle = expectedResult[i];
+      expect(actualEle === expectedEle).toBe(true);
     }
   });
 });
