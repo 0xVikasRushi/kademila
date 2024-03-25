@@ -21,6 +21,36 @@ describe("Node Startup and Communication", () => {
     }
   });
 
+  test("Ping another node using pingServer route", async () => {
+    const targetPort = 3005;
+    const response = await axios.get(
+      `http://localhost:3000/pingServer/${targetPort}`,
+    );
+    expect(response.data.status).toBe(true);
+  });
+
+  test("Ping all servers with each other", async () => {
+    for (let i = 0; i < nodes.length; i++) {
+      const sourceNode = nodes[i];
+      for (let j = 0; j < nodes.length; j++) {
+        if (i !== j) {
+          // ! self ping remove
+          const targetNode = nodes[j];
+          const targetPort = targetNode.port;
+          const response = await axios.get(
+            `http://localhost:${sourceNode.port}/pingServer/${targetPort}`,
+          );
+
+          expect(response.data.status).toBe(true);
+          expect(
+            response.data.msg ===
+              `PING FROM ${sourceNode.id} TO PORT=${targetPort}`,
+          ).toBe(true);
+        }
+      }
+    }
+  });
+
   test(`All Buckets should be length of ${BIT_SIZE}`, async () => {
     for (const node of nodes) {
       const response = (await axios.get(`http://localhost:${node.port}/ping`))

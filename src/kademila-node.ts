@@ -88,7 +88,7 @@ export class KademilaNode {
           return res
             .json({
               status: result,
-              msg: `PING FROM ${this.id} TO ${port}`,
+              msg: `PING FROM ${this.id} TO PORT=${port}`,
             })
             .status(200);
         } catch (error) {
