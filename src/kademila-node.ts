@@ -85,7 +85,6 @@ export class KademilaNode {
           const port = req.params.port as string;
           let result = await axios.get(`http://${this.ip}:${port}/ping`);
           result = result.data.status;
-          console.log(result);
           return res
             .json({
               status: result,
