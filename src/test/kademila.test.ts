@@ -1,7 +1,7 @@
 import axios from "axios";
 import { KademilaNode } from "../kademila-node";
 import { startNode } from "../utils";
-import { BIT_SIZE } from "../constant";
+import { BIT_SIZE, PORT_NUMBER } from "../constant";
 import { FindNodeResponse, PingResponse } from "../types";
 
 describe("Node Startup and Communication", () => {
@@ -10,7 +10,8 @@ describe("Node Startup and Communication", () => {
   // ? Start nodes 0-15 on different ports
   beforeAll(async () => {
     for (let i = 0; i < 16; i++) {
-      nodes.push(await startNode(i, 3000 + i));
+      const node = await startNode(i, PORT_NUMBER + i);
+      nodes.push(node);
     }
   });
 
@@ -22,9 +23,9 @@ describe("Node Startup and Communication", () => {
   });
 
   test("Ping another node using pingServer route", async () => {
-    const targetPort = 3005;
+    const targetPort = PORT_NUMBER + 5;
     const response = await axios.get(
-      `http://localhost:3000/pingServer/${targetPort}`,
+      `http://localhost:${PORT_NUMBER}/pingServer/${targetPort}`,
     );
     expect(response.data.status).toBe(true);
   });
@@ -75,8 +76,9 @@ describe("Node Startup and Communication", () => {
   // ? Route from 0-> 15 i.e 0000 to 1111 will be from 8, 12, 14
   test("FindNode 15 Route from Node 0 -> Node 15", async () => {
     const expectedResult = [8, 12, 14];
-    const result = (await axios.get("http://localhost:3000/findNode/15"))
-      .data as FindNodeResponse;
+    const result = (
+      await axios.get(`http://localhost:${PORT_NUMBER}/findNode/15`)
+    ).data as FindNodeResponse;
     const route = result.route!;
     expect(expectedResult.length === route.length).toBe(true);
     for (let i = 0; i < expectedResult.length; i++) {
@@ -89,8 +91,9 @@ describe("Node Startup and Communication", () => {
   // ? Route from 15-> 0 i.e 1111 to 0000 will be from 7,3,1
   test("FindNode 15 Route from Node 0 -> Node 15", async () => {
     const expectedResult = [7, 3, 1]; // ? refer routing table
-    const result = (await axios.get("http://localhost:3015/findNode/0"))
-      .data as FindNodeResponse;
+    const result = (
+      await axios.get(`http://localhost:${PORT_NUMBER + 15}/findNode/0`)
+    ).data as FindNodeResponse;
     const route = result.route!;
     expect(expectedResult.length === route.length).toBe(true);
     for (let i = 0; i < expectedResult.length; i++) {

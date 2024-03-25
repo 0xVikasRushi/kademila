@@ -1,7 +1,7 @@
 import axios from "axios";
 import cors from "cors";
 import express, { Request, Response } from "express";
-import { BIT_SIZE } from "./constant";
+import { BIT_SIZE, PORT_NUMBER } from "./constant";
 import {
   FindNodeResponse,
   NodeState,
@@ -256,7 +256,6 @@ export class KademilaNode {
   public init() {
     const node_id = this.id;
     const IDEAL_DISTANCE = getIdealDistance();
-    const PORT_NUMBER = 3000;
 
     const k_bucket_without_ping: number[] = [];
     for (let i = 0; i < IDEAL_DISTANCE.length; i++) {
