@@ -125,9 +125,14 @@ export class KademilaNode {
 
       this.app.get("/findValue/:key", async (req: Request, res: Response) => {
         const hashKey = this.hashKey(parseInt(req.params.key));
-        const value = await this.FIND_VALUE(hashKey);
-        if (value) {
-          return res.send({ value, found: true });
+        const data = await this.FIND_VALUE(hashKey);
+
+        if (data?.value && data?.node_id && data?.route) {
+          return res.send({
+            value: data?.value,
+            foundAt: data?.node_id,
+            route: data?.route,
+          });
         } else {
           return res.send({ found: false });
         }
@@ -210,18 +215,18 @@ export class KademilaNode {
 
     const wanted_port = this.network.get(nodeId!);
 
-    const result = (await axios.get(
-      `http://${this.ip}:${wanted_port}/get/${hash_key}`,
-    )) as SaveValueResponse;
-
+    const result = (
+      await axios.get(`http://${this.ip}:${wanted_port}/get/${hash_key}`)
+    ).data as SaveValueResponse;
     if (result.found) {
       return Promise.resolve({
         value: result.value!,
         node_id: nodeId!,
         route: route!,
       });
+    } else {
+      return null;
     }
-    return null;
   }
 
   public async FIND_NODE(
