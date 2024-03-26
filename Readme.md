@@ -1,6 +1,6 @@
 # Kademlia - Distributed Hash Table Implementation
 
-This project implements a Kademlia Distributed Hash Table (DHT) for storing and retrieving key-value pairs across a decentralized network
+This project implements a Kademlia Distributed Hash Table (DHT) for storing and retrieving key-value pairs across a decentralised network
 
 This project focuses on a simplified Kademlia implementation demonstrating core concepts. While a real-world [Kademlia Paper](https://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf) uses 160-bit identifiers, I'm using 6 bits for easier testing (32 possible nodes).
 
@@ -26,7 +26,7 @@ Each node in the network receives a unique 6-bit identifier (000000 to 111111).
 
 ## **2. Which Node should own <k,v> pair**
 
-\*Kademlia uses the XOR (^) operation to calculate the distance between node IDs. It adheres to these properties:
+Kademlia uses the XOR (^) operation to calculate the distance between node IDs. It adheres to these properties:
 
 - `d(x, x) = 0` (distance to itself is zero)
 - `d(x, y) > 0` (distance is positive)
@@ -34,7 +34,8 @@ Each node in the network receives a unique 6-bit identifier (000000 to 111111).
 
 * This metric helps determine which node should store a key-value pair based on the key's distance to node IDs. The node with the closest distance "owns" the key-value pair.
 
-Similarly Let's take <k,v> pair and calculate the distance between <k,v> and n0,n1.....n31 nodes . Node with less distance we will store <k,v> with <Node>
+Similarly Let's take <k,v> pair and calculate the distance between <k,v> and n0,n1.....n31 nodes . Node with less distance we will store <k,v> with `Node`
+
 **Observation: the most common Prefix of key and shorter distance**
 
 ## **3. Routing Storing Adjacent Node**
