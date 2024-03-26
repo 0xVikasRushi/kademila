@@ -2,7 +2,7 @@
 
 This project implements a Kademlia Distributed Hash Table (DHT) for storing and retrieving key-value pairs across a decentralized network
 
-This project focuses on a simplified Kademlia implementation demonstrating core concepts. While a real-world [Kademlia Paper]('https://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf') uses 160-bit identifiers, I'm using 6 bits for easier testing (32 possible nodes).
+This project focuses on a simplified Kademlia implementation demonstrating core concepts. While a real-world [Kademlia Paper](https://pdos.csail.mit.edu/~petar/papers/maymounkov-kademlia-lncs.pdf) uses 160-bit identifiers, I'm using 6 bits for easier testing (32 possible nodes).
 
 ## why do we need DHT?
 
