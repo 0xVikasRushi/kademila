@@ -2,7 +2,7 @@
 
 This project implementing a Kademlia Distributed Hash Table (DHT) for storing and retrieving key-value pairs across a decentralized network
 
-This project focuses on a simplified Kademlia implementation demonstrating core concepts. While a real-world Kademlia uses 160-bit identifiers, I'm using 6 bits for easier testing (64 possible nodes).
+This project focuses on a simplified Kademlia implementation demonstrating core concepts. While a real-world Kademlia uses 160-bit identifiers, I'm using 6 bits for easier testing (32 possible nodes).
 
 ## why need a need this DHT?
 
@@ -100,3 +100,5 @@ Once the node that owns the <k,v> pair is identified, the value can be stored on
 I have tested current algorithm with 32 nodes i.e 6 Bit Node identifer, view all test cases `src/test/kademila.test.ts`
 
 <img alt="test-result" src="https://github.com/0xVikasRushi/kademila/assets/88543171/4470d365-133f-4a34-a50d-12796b6385b2" height="50%" width="50%">
+
+
