@@ -9,7 +9,7 @@ describe("Node Startup and Communication", () => {
 
   // ? Start nodes 0-15 on different ports
   beforeAll(async () => {
-    for (let i = 0; i < 16; i++) {
+    for (let i = 0; i < Math.pow(2, BIT_SIZE); i++) {
       const node = await startNode(i, PORT_NUMBER + i);
       nodes.push(node);
     }

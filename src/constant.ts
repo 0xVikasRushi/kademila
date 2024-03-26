@@ -1,4 +1,4 @@
-export const BIT_SIZE = 4;
+export const BIT_SIZE = 6;
 export const PORT_NUMBER = 3000;
 
 export const IDEAL_DISTANCE_2_POW_64 = [

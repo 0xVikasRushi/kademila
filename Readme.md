@@ -6,8 +6,8 @@ This project focuses on a simplified Kademlia implementation demonstrating core 
 
 ## why need a need this DHT?
 
-1. **Scalability** - Efficiently  in storage we can distribute data across all nodes
-2. **Decentralization** - maintaining p2p network (trustless) 
+1. **Scalability** - Efficiently in storage we can distribute data across all nodes
+2. **Decentralization** - maintaining p2p network (trustless)
 3. **Fault Tolerance**
 
 ## Project Stages
@@ -18,33 +18,30 @@ This project focuses on a simplified Kademlia implementation demonstrating core 
 4. Routing (where to find <k,v>?)
 5. Store values in Nodes
 
-##  1.Node Identification
+## 1.Node Identification
 
 Each node in the network receives a unique 6-bit identifier (000000 to 111111).
 
- **In a real-world scenario, cryptographic hashing algorithms like SHA-1 would generate these unique IDs.**
+**In a real-world scenario, cryptographic hashing algorithms like SHA-1 would generate these unique IDs.**
 
 ## **2. Which Node should own <k,v> pair**
 
-*Kademlia use  the XOR (^) operation to calculate the distance between node IDs. It adheres to these properties: 
-- `d(x, x) = 0` (distance to itself is zero) 
-- `d(x, y) > 0` (distance is positive) 
+\*Kademlia use the XOR (^) operation to calculate the distance between node IDs. It adheres to these properties:
+
+- `d(x, x) = 0` (distance to itself is zero)
+- `d(x, y) > 0` (distance is positive)
 - `d(x, y) + d(y, z) >= d(x, z)` (triangle inequality)
 
 * This metric helps determine which node should store a key-value pair based on the key's distance to node IDs. The node with the closest distance "owns" the key-value pair.
 
-
-Similarly  Lets take <k,v> pair and calculate distance between <k,v> and n0,n1.....n31 nodes . Node with mininum distance we will store <k,v> with <Node>
-
+Similarly Lets take <k,v> pair and calculate distance between <k,v> and n0,n1.....n31 nodes . Node with less distance we will store <k,v> with <Node>
 **Observation : the most common Prefix of key and shorter distance**
-
 
 ## **3. Routing Storing Adjacent Node**
 
 how would node 7 find what’s the value at key 13?
 
 **Every node will have a routing table with IP addresses and IDs of at least “K” other active nodes in a prefix range**
-whatttt?
 
 Every Node will need n connection to talk where n=4 (actual n=160bits)
 
