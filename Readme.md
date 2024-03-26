@@ -57,24 +57,24 @@ A node checks its k-buckets and chooses the node with the least distance to the 
 
 It will check for k-buckets and choose least distance with key and routes from one node to another node
 
-| **Peer GUID** | **2^0 = 1 distance** | **2^1 = 2 distance** | **2^2 = 4 distance** | **2^3 = 8 distance** |
-| ------------- | -------------------- | -------------------- | -------------------- | -------------------- |
-| **0**         | 1                    | 2                    | 4                    | 8                    |
-| **1**         | 0                    | 3                    | 5                    | 9                    |
-| **2**         | 3                    | 0                    | 4                    | 10                   |
-| **3**         | 2                    | 1                    | 7                    | 11                   |
-| **4**         | 5                    | 6                    | 0                    | 12                   |
-| **5**         | 4                    | 7                    | 1                    | 13                   |
-| **6**         | 7                    | 4                    | 2                    | 14                   |
-| **7**         | 6                    | 5                    | 3                    | 15                   |
-| **8**         | 9                    | 10                   | 12                   | 0                    |
-| **9**         | 8                    | 11                   | 13                   | 1                    |
-| **10**        | 11                   | 8                    | 14                   | 2                    |
-| **11**        | 10                   | 9                    | 15                   | 3                    |
-| **12**        | 13                   | 14                   | 8                    | 4                    |
-| **13**        | 12                   | 15                   | 9                    | 5                    |
-| **14**        | 15                   | 12                   | 10                   | 6                    |
-| **15**        | 14                   | 13                   | 11                   | 7                    |
+| **Peer GUID** | **2^0 = 1** | **2^1 = 2** | **2^2 = 4** | **2^3 = 8** |
+| ------------- | ----------- | ----------- | ----------- | ----------- |
+| **0**         | 1           | 2           | 4           | 8           |
+| **1**         | 0           | 3           | 5           | 9           |
+| **2**         | 3           | 0           | 4           | 10          |
+| **3**         | 2           | 1           | 7           | 11          |
+| **4**         | 5           | 6           | 0           | 12          |
+| **5**         | 4           | 7           | 1           | 13          |
+| **6**         | 7           | 4           | 2           | 14          |
+| **7**         | 6           | 5           | 3           | 15          |
+| **8**         | 9           | 10          | 12          | 0           |
+| **9**         | 8           | 11          | 13          | 1           |
+| **10**        | 11          | 8           | 14          | 2           |
+| **11**        | 10          | 9           | 15          | 3           |
+| **12**        | 13          | 14          | 8           | 4           |
+| **13**        | 12          | 15          | 9           | 5           |
+| **14**        | 15          | 12          | 10          | 6           |
+| **15**        | 14          | 13          | 11          | 7           |
 
 ## 5. Store values in Nodes
 
@@ -95,10 +95,8 @@ Once the node that owns the <k,v> pair is identified, the value can be stored on
 - GET `/api/findNode/:key`
   - Finds the closest node responsible for a key (not necessarily storing the data)
 
-## Testing 
+## Testing
 
 I have tested current algorithm with 32 nodes i.e 6 Bit Node identifer, view all test cases `src/test/kademila.test.ts`
 
 <img alt="test-result" src="https://github.com/0xVikasRushi/kademila/assets/88543171/4470d365-133f-4a34-a50d-12796b6385b2" height="50%" width="50%">
-
-
