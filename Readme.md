@@ -53,6 +53,8 @@ So every node should store k buckets i.e 4 buckets in this case
 
 ## **4.Routing (where to find <k,v>?)**
 
+A node checks its k-buckets and chooses the node with the least distance to the key. It then routes the request from one node to another until it reaches the node that "owns" the <k,v> pair.
+
 It will check for k-buckets and choose least distance with key and routes from one node to another node
 
 | **Peer GUID** | **2^0 = 1 distance** | **2^1 = 2 distance** | **2^2 = 4 distance** | **2^3 = 8 distance** |
@@ -73,3 +75,22 @@ It will check for k-buckets and choose least distance with key and routes from o
 | **13**        | 12                   | 15                   | 9                    | 5                    |
 | **14**        | 15                   | 12                   | 10                   | 6                    |
 | **15**        | 14                   | 13                   | 11                   | 7                    |
+
+## 5. Store values in Nodes
+
+Once the node that owns the <k,v> pair is identified, the value can be stored on that node. Kademlia also implements mechanisms to maintain the routing table and k-buckets as the network evolves.
+
+### Api Reference
+
+- GET `/api/ping`
+  - Checks if the current node is reachable and current Buckets
+- GET `/api/pingServer`
+  - Pings a specific node by its port number
+- GET `/api/get/:key`
+  - Retrieves the value associated with a key from own network.
+- GET `/api/save/:key/:value`
+  - Initiates storing a key-value pair in associated node
+- GET `/api/findValue/:key`
+  - Locates the value of key responsible for storing a key's data.
+- GET `/api/findNode/:key`
+  - Finds the closest node responsible for a key (not necessarily storing the data)
