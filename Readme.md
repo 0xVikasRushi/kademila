@@ -43,14 +43,33 @@ how would node 7 find what’s the value at key 13?
 
 **Every node will have a routing table with IP addresses and IDs of at least “K” other active nodes in a prefix range**
 
-Every Node will need n connection to talk where n=4 (actual n=160bits)
+For Example if node identifier size is 4 bit then total size of network 2^4 = 16
+
+So every node should store k buckets i.e 4 buckets in this case
+
+![kademila-wiki](https://upload.wikimedia.org/wikipedia/commons/6/63/Dht_example_SVG.svg)
+
+So 1111 i.e 15 node should know 4 nodes in different sub trees with distance 1,2,4,8 so k-buckets for node 15 will be 14,13,11,7
 
 **4.Routing (where to find <k,v>?)**
 
-Apply Least common ancestor Algorithm to find pairs
+It will check for k-buckets and choose least distance with key and routes from one node to another node
 
-if key=1101 we can search in node=1110 or node=1111
-
-https://leetcode.com/problems/lowest-common-ancestor-of-a-binary-tree/
-
-**5.Store values in Single/Mutiple Nodes**
+| **Peer GUID** | **2^0 = 1 distance** | **2^1 = 2 distance** | **2^2 = 4 distance** | **2^3 = 8 distance** |
+| ------------- | -------------------- | -------------------- | -------------------- | -------------------- |
+| **0**         | 1                    | 2                    | 4                    | 8                    |
+| **1**         | 0                    | 3                    | 5                    | 9                    |
+| **2**         | 3                    | 0                    | 4                    | 10                   |
+| **3**         | 2                    | 1                    | 7                    | 11                   |
+| **4**         | 5                    | 6                    | 0                    | 12                   |
+| **5**         | 4                    | 7                    | 1                    | 13                   |
+| **6**         | 7                    | 4                    | 2                    | 14                   |
+| **7**         | 6                    | 5                    | 3                    | 15                   |
+| **8**         | 9                    | 10                   | 12                   | 0                    |
+| **9**         | 8                    | 11                   | 13                   | 1                    |
+| **10**        | 11                   | 8                    | 14                   | 2                    |
+| **11**        | 10                   | 9                    | 15                   | 3                    |
+| **12**        | 13                   | 14                   | 8                    | 4                    |
+| **13**        | 12                   | 15                   | 9                    | 5                    |
+| **14**        | 15                   | 12                   | 10                   | 6                    |
+| **15**        | 14                   | 13                   | 11                   | 7                    |
