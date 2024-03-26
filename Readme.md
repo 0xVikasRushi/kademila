@@ -47,11 +47,11 @@ For Example if node identifier size is 4 bit then total size of network 2^4 = 16
 
 So every node should store k buckets i.e 4 buckets in this case
 
-![kademila-wiki](https://upload.wikimedia.org/wikipedia/commons/6/63/Dht_example_SVG.svg)
+![kademila-pic](https://i0.wp.com/softwareengineeringdaily.com/wp-content/uploads/2018/07/Kademlia2.jpg?resize=730%2C389&ssl=1)
 
-So 1111 i.e 15 node should know 4 nodes in different sub trees with distance 1,2,4,8 so k-buckets for node 15 will be 14,13,11,7
+**So 1111 i.e 15 node should know 4 nodes in different sub trees with distance 1,2,4,8 so k-buckets for node 15 will be 14,13,11,7**
 
-**4.Routing (where to find <k,v>?)**
+## **4.Routing (where to find <k,v>?)**
 
 It will check for k-buckets and choose least distance with key and routes from one node to another node
 
