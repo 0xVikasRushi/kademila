@@ -1,8 +1,8 @@
 import axios from "axios";
-import { KademilaNode } from "../kademila-node";
-import { startNode } from "../utils";
 import { BIT_SIZE, PORT_NUMBER } from "../constant";
-import { FindNodeResponse, PingResponse } from "../types";
+import { KademilaNode } from "../kademila-node";
+import { FindNodeResponse, PingResponse, SaveValueResponse } from "../types";
+import { startNode } from "../utils";
 
 describe("Node Startup and Communication", () => {
   const nodes: KademilaNode[] = [];
@@ -74,7 +74,7 @@ describe("Node Startup and Communication", () => {
   });
 
   // ? Route from 0-> 15 i.e 0000 to 1111 will be from 8, 12, 14
-  test("FindNode 15 Route from Node 0 -> Node 15", async () => {
+  test("FindNode 0 Route from Node 0 -> Node 15", async () => {
     const expectedResult = [8, 12, 14];
     const result = (
       await axios.get(`http://localhost:${PORT_NUMBER}/findNode/15`)
@@ -89,7 +89,7 @@ describe("Node Startup and Communication", () => {
   });
 
   // ? Route from 15-> 0 i.e 1111 to 0000 will be from 7,3,1
-  test("FindNode 15 Route from Node 0 -> Node 15", async () => {
+  test("FindNode 15 Route from Node 15 -> Node 0", async () => {
     const expectedResult = [7, 3, 1]; // ? refer routing table
     const result = (
       await axios.get(`http://localhost:${PORT_NUMBER + 15}/findNode/0`)
@@ -102,4 +102,53 @@ describe("Node Startup and Communication", () => {
       expect(actualEle === expectedEle).toBe(true);
     }
   });
+
+  test("Save/Find Key in Self Node from Self Node", async () => {
+    for (const node of nodes) {
+      const value = "test-1" + node.id.toString();
+      await axios.get(
+        `http://${node.ip}:${node.port}/save/${node.id}/${value}`,
+      );
+    }
+    for (const node of nodes) {
+      const value = "test-1" + node.id.toString();
+      const result = (
+        await axios.get(`http://${node.ip}:${node.port}/get/${node.id}`)
+      ).data as SaveValueResponse;
+      expect(value === result.value!).toBe(true);
+    }
+  });
+
+  // ! saving keys from single server and fetching values in corresponding node_id servers
+  test("Save/Find Key in Self Node from Random Node", async () => {
+    for (const node of nodes) {
+      const randomPort = PORT_NUMBER + 6;
+      const value = "test-2" + node.id.toString();
+      await axios.get(
+        `http://${node.ip}:${randomPort}/save/${node.id}/${value}`,
+      );
+    }
+    for (const node of nodes) {
+      const value = "test-2" + node.id.toString();
+      const result = // !
+        (await axios.get(`http://${node.ip}:${node.port}/get/${node.id}`))
+          .data as SaveValueResponse;
+      expect(value === result.value!).toBe(true);
+    }
+  });
+
+  test("Save Key and Find Key From AnyWhere", async () => {
+    const randomPort = PORT_NUMBER + 3;
+    const value = "test-3";
+    const id = 10;
+    await axios.get(`http://localhost:${randomPort}/save/${id}/${value}`);
+
+    for (const node of nodes) {
+      const result = (
+        await axios.get(`http://${node.ip}:${node.port}/findValue/${id}`)
+      ).data as SaveValueResponse;
+      expect(value === result.value!).toBe(true);
+    }
+  });
+  // ? Save value in first node to last node and fetch value from last node
 });

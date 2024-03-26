@@ -5,7 +5,7 @@ import { KademilaNode } from "./kademila-node";
 // * Create a mask with all bits set except MSB using bitwise operations
 // * Perform bitwise AND between key and mask for hashing
 export const HASH_BIT_SIZE = (key: number) => {
-  const mask: number = (1 << (BIT_SIZE - 1)) - 1;
+  const mask: number = (1 << (Math.pow(2, BIT_SIZE) - 1)) - 1;
   return key & mask;
 };
 

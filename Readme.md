@@ -1,56 +1,45 @@
-Kademlia - Distributed Hash Table Implementation
+# Kademlia - Distributed Hash Table Implementation
 
-HashMap which store (key,value) pairs in system. what if you want to distribute this hashmap across various system
+This project implementing a Kademlia Distributed Hash Table (DHT) for storing and retrieving key-value pairs across a decentralized network
 
-why need a need this DHT?
+This project focuses on a simplified Kademlia implementation demonstrating core concepts. While a real-world Kademlia uses 160-bit identifiers, I'm using 6 bits for easier testing (64 possible nodes).
 
-1. maintaining p2p network (trustless)
-2. efficient in storage we can distribute data across all nodes
-3. fault tolerance
+## why need a need this DHT?
 
-Project Milestones
+1. **Scalability** - Efficiently  in storage we can distribute data across all nodes
+2. **Decentralization** - maintaining p2p network (trustless) 
+3. **Fault Tolerance**
 
-1. Assigning Nodes
+## Project Stages
+
+1. Node Identification
 2. Distance Metric (Which Node should own <k,v> pair ?)
 3. Routing Storing Adjacent Node
 4. Routing (where to find <k,v>?)
-5. Store values in Single/Mutiple Nodes
-6. Updating <k,v> pair if network is gone
+5. Store values in Nodes
 
-**1 Assigning Nodes**
+##  1.Node Identification
 
-Each Node in network should have 160bit(20 bytes) id which should be unique
+Each node in the network receives a unique 6-bit identifier (000000 to 111111).
 
-SHA-1 hashing algorithm outputs 160 bit
+ **In a real-world scenario, cryptographic hashing algorithms like SHA-1 would generate these unique IDs.**
 
-but for simplcity i will use 4 bits for unique id i.e 2^4=> 16 nodes
+## **2. Which Node should own <k,v> pair**
 
-Our system can have max of 16 nodes store
+*Kademlia use  the XOR (^) operation to calculate the distance between node IDs. It adheres to these properties: 
+- `d(x, x) = 0` (distance to itself is zero) 
+- `d(x, y) > 0` (distance is positive) 
+- `d(x, y) + d(y, z) >= d(x, z)` (triangle inequality)
 
-**0000** (Node 0) similaritly -> **1111** (Node 15)
+* This metric helps determine which node should store a key-value pair based on the key's distance to node IDs. The node with the closest distance "owns" the key-value pair.
 
-**2. Which Node should own <k,v> pair**
 
-Rules for distance metric
+Similarly  Lets take <k,v> pair and calculate distance between <k,v> and n0,n1.....n31 nodes . Node with mininum distance we will store <k,v> with <Node>
 
-1. d(x,x) = 0 self distance should be zero
-2. d(x,y) > 0 distance should be +ve
+**Observation : the most common Prefix of key and shorter distance**
 
-3. d(x,y) + d(y,z) >= d(x,z) trianlge inequality
 
-   **shortest distance between the two points is staright line connecting them**
-
-distance metric used in kademlia is
-**d(x,y) = x ^ y (XOR) which is satisy all distance metric rules**
-
-- Lets take <k,v> pair and calculate distance between <k,v> and n0,n1.....n15 nodes
-- Node with mininum distance we will store <k,v> with <Node>
-
-**Observation : the most comman Prefix of key and shorter distance**
-
-- Instead of building complete binary tree **(16 nodes)** building tree which has path and if you don;t find the path similar to it ignore the subtree
-
-**3. Routing Storing Adjacent Node**
+## **3. Routing Storing Adjacent Node**
 
 how would node 7 find what’s the value at key 13?
 

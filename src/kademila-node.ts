@@ -77,7 +77,7 @@ export class KademilaNode {
         res.send({ values });
       });
 
-      this.app.get("get/:key", async (req: Request, res: Response) => {
+      this.app.get("/get/:key", async (req: Request, res: Response) => {
         const key = parseInt(req.params.key);
         const value = this.GET(key);
         if (value) {
@@ -135,11 +135,11 @@ export class KademilaNode {
 
       this.app.get("/save/:key/:value", async (req: Request, res: Response) => {
         try {
-          const key = HASH_BIT_SIZE(parseInt(req.params.key));
+          const key = this.hashKey(parseInt(req.params.key));
           const value = req.params.value as string;
 
-          if (key == this.id) {
-            this.SAVE(key, value);
+          if (key === this.id) {
+            this.map.set(key, value);
             return res.send({
               status: "SAVED",
               msg: `saved at node id ${this.id}:${this.port}`,
@@ -189,26 +189,37 @@ export class KademilaNode {
   public async FIND_VALUE(key: number): Promise<{
     value: string;
     node_id: number;
+    route: number[];
   } | null> {
     const hash_key = this.hashKey(key);
 
-    const value = this.map.get(hash_key);
-    if (value!) {
-      return Promise.resolve({ value, node_id: this.id });
-    }
-    const route: number[] = [];
-    const wanted_node_id = (
-      await this.FIND_NODE(hash_key, this.k_buckets, route)
-    ).nodeId!;
+    const new_route: number[] = [];
 
-    const wanted_port = this.network.get(wanted_node_id);
+    if (hash_key === this.id) {
+      const value = this.map.get(hash_key);
+      if (value) {
+        return Promise.resolve({ value, node_id: this.id, route: new_route });
+      }
+    }
+
+    const { nodeId, route } = await this.FIND_NODE(
+      hash_key,
+      this.k_buckets,
+      new_route,
+    );
+
+    const wanted_port = this.network.get(nodeId!);
 
     const result = (await axios.get(
       `http://${this.ip}:${wanted_port}/get/${hash_key}`,
     )) as SaveValueResponse;
 
     if (result.found) {
-      return Promise.resolve({ value: result.value!, node_id: wanted_node_id });
+      return Promise.resolve({
+        value: result.value!,
+        node_id: nodeId!,
+        route: route!,
+      });
     }
     return null;
   }
