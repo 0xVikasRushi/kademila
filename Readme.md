@@ -80,7 +80,7 @@ It will check for k-buckets and choose least distance with key and routes from o
 
 Once the node that owns the <k,v> pair is identified, the value can be stored on that node. Kademlia also implements mechanisms to maintain the routing table and k-buckets as the network evolves.
 
-### Api Reference
+## Api Reference
 
 - GET `/api/ping`
   - Checks if the current node is reachable and current Buckets
@@ -94,3 +94,9 @@ Once the node that owns the <k,v> pair is identified, the value can be stored on
   - Locates the value of key responsible for storing a key's data.
 - GET `/api/findNode/:key`
   - Finds the closest node responsible for a key (not necessarily storing the data)
+
+## Testing 
+
+I have tested current algorithm with 32 nodes i.e 6 Bit Node identifer, view all test cases `src/test/kademila.test.ts`
+
+<img alt="test-result" src="https://github.com/0xVikasRushi/kademila/assets/88543171/4470d365-133f-4a34-a50d-12796b6385b2" height="50%" width="50%">
